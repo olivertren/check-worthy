@@ -1,14 +1,13 @@
 from src.utils.dicts import get_stopwords
 from src.features.features import Feature
 from nltk.tokenize import word_tokenize
-from src.utils.config import get_config
+# from src.utils.config import get_config
 
 import json
 import datetime
 
-CONFIG = get_config()
-CLAIMS_FILE = CONFIG['pf_claims']
-
+# CONFIG = get_config()
+CLAIMS_FILE = 'data/claim-rank/pf_17_12_2016.json'
 
 def text2date(text):
     date_numbers = text.split("T")[0].split("-")
@@ -78,7 +77,7 @@ class TrainSearch(Feature):
                 overlapping_tokens = len(set(clean_tokens).intersection(train_sent.clean_tokens))
                 if overlapping_tokens > 0:
                     # only take similarity to claim-worthy ones!
-                    claim = 1 if train_sent.label > 0 else 0
+                    claim = 1 if train_sent.label_test > 0 else 0
                     sim_to_nearest_claim = max(claim * overlapping_tokens, sim_to_nearest_claim)
                     sim_with_person = max(claim * overlapping_tokens
                                             * (1 if train_sent.speaker == sent.speaker else 0), sim_with_person)

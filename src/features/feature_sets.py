@@ -2,7 +2,7 @@ from os import listdir
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing.data import MinMaxScaler
 from sklearn.pipeline import TransformerMixin
-# from src.features.features import ToMatrix, ReadFeatures
+from src.features.features import ToMatrix, ReadFeatures
 # from src.utils.config import get_config
 
 
@@ -54,28 +54,6 @@ def get_cb_pipeline(train):
 #     ]
 #     return get_pipeline(feats, to_matrix)
 
-class Feature(TransformerMixin):
-    """Feature Interface."""
-    def fit(self, X, y=None, **fit_params):
-        return self
-
-class ToMatrix(Feature):
-    """Transforms the features dict to a matrix"""
-    def __init__(self, features):
-        self.features = features
-
-    def transform(self, X):
-        final_X = []
-
-        for sent in X:
-            sent_vector = []
-            for feat in self.features:
-                if isinstance(sent.features[feat], list):
-                    sent_vector += sent.features[feat]
-                else:
-                    sent_vector.append(sent.features[feat])
-            final_X.append(sent_vector)
-        return final_X
 
 def get_pipeline(features, to_matrix=True):
     """
@@ -91,21 +69,22 @@ def get_pipeline(features, to_matrix=True):
         return Pipeline(features)
 
 
-# def get_serialized_pipeline(train):
-#     from src.features import counting_feat, knn_similarity
-#     config = get_config()
+def get_serialized_pipeline(train):
+    from src.features import counting_feat, knn_similarity
+    # config = get_config()
+    features_dump_dir = 'data/claim-rank/feats_dumps'
 
-#     black_list = ['polarity', 'subjectivity', 'sent_nrc',
-#                   'discourse_rel', 'discourse_it',
-#                   'in_chunk_last_it', 'in_chunk_last_rel', 'in_chunk_first_it', 'in_chunk_first_rel'
-#                   ]
-#     read_feature_names = [file_name for file_name in listdir(config['features_dump_dir']) if file_name not in black_list]
+    black_list = ['polarity', 'subjectivity', 'sent_nrc',
+                  'discourse_rel', 'discourse_it',
+                  'in_chunk_last_it', 'in_chunk_last_rel', 'in_chunk_first_it', 'in_chunk_first_rel'
+                  ]
+    read_feature_names = [file_name for file_name in listdir(features_dump_dir) if file_name not in black_list]
 
-#     all_feature_names = read_feature_names + counting_feat.BagOfTfIDFN.FEATS + knn_similarity.TrainSearch.FEATS
-#     print(all_feature_names)
+    all_feature_names = read_feature_names + counting_feat.BagOfTfIDFN.FEATS + knn_similarity.TrainSearch.FEATS
+    print(all_feature_names)
 
-#     return Pipeline([('read', ReadFeatures(read_feature_names)),
-#                      ("train_search", knn_similarity.TrainSearch(train=train)),
-#                      ('tfidf', counting_feat.BagOfTfIDFN(train)),  # cb
-#                      ('transform', ToMatrix(features=all_feature_names)),
-#                      ('norm', MinMaxScaler())])
+    return Pipeline([('read', ReadFeatures(read_feature_names)),
+                     ("train_search", knn_similarity.TrainSearch(train=train)),
+                     ('tfidf', counting_feat.BagOfTfIDFN(train)),  # cb
+                     ('transform', ToMatrix(features=all_feature_names)),
+                     ('norm', MinMaxScaler())])

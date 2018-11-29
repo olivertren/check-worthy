@@ -58,7 +58,7 @@ class SentimentLexicons(Feature):
         qatar_lexicon_files = ["negative-words-Liu05.txt", "negations.txt", "bias-lexicon-RecasensACL13.txt"]
         self.lexicons = []
         for lexicon in qatar_lexicon_files:
-            self.lexicons.append(set(open(join(CONFIG['sentiment_lexicons'], lexicon), encoding='iso-8859-1').
+            self.lexicons.append(set(open(join('../../data/claim-rank/dicts/lexicons', lexicon), encoding='iso-8859-1').
                                      read().split("\n")))
 
     def transform(self, X):
@@ -152,11 +152,11 @@ class QatarLexicons(Feature):
     FEATS = ['lexicons']
 
     def __init__(self):
-        lexicons_l = sorted(listdir(CONFIG['qatar_lexicons']))
+        lexicons_l = sorted(listdir('../../data/claim-rank/dicts/lexicons'))
         lexicons_l.remove("readme.txt")
         self.lexicons = []
         for lexicon in lexicons_l:
-            self.lexicons.append(set(open(join(CONFIG['qatar_lexicons'], lexicon), encoding='iso-8859-1').
+            self.lexicons.append(set(open(join('../../data/claim-rank/dicts/lexicons', lexicon), encoding='iso-8859-1').
                                      read().split("\n")))
 
     def transform(self, X):

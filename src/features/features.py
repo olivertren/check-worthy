@@ -1,6 +1,6 @@
 import json
 from sklearn.pipeline import TransformerMixin
-from src.utils.config import get_config
+# from src.utils.config import get_config
 
 
 class Feature(TransformerMixin):
@@ -11,10 +11,11 @@ class Feature(TransformerMixin):
 
 class ReadFeatures(Feature):
     def __init__(self, feature_names):
-        config = get_config()
+        # config = get_config()
+        features_dump_dir = 'data/claim-rank/feats_dumps/'
         self._feature_dicts = {}
         for feature in feature_names:
-            self._feature_dicts[feature] = json.loads(open(config['features_dump_dir']+feature).read())
+            self._feature_dicts[feature] = json.loads(open(features_dump_dir+feature).read())
 
     def transform(self, X):
         for _x in X:
